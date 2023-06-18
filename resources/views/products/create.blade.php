@@ -15,7 +15,7 @@
     </div>
     <div class="py-5">
         <div class="container">
-            <form action="{{ route('temp-images.create')}}" name="productForm" id="productForm" method="post">
+            <form action="" name="productForm" id="productForm" method="post">
                 <div class="card border-0 shadow-lg">
                     <div class="card-body">
                         
@@ -24,13 +24,14 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <input type="text" name="name" id="name" value="" placeholder="Name" class="form-control">
-                                    <p></p>
+                                    
+                                    @error('name')<p>{{ $message }}</p> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <input type="text" name="price" id="price" value="" placeholder="Price" class="form-control">
-                                    <p></p>
+                                    @error('price')<p>{{ $message }}</p> @enderror
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -81,12 +82,32 @@
                             <div class="card image-card">
                                 <a href="#" onclick="" class="btn btn-danger">Delete</a>
                                 <img src="${response.imagePath}" alt="" class="w-100 card-img-top">
+                                <div class="card-body">
+                                    <input type="hidden" name="caption[]"  value="" class="form-control"/>
+                                    <input type="hidden" name="image_id[]" value="${response.image_id}"/>
+                                </div>
                             </div>
                         </div>`;
         $("#image-wrapper").append(html);
-
+        $("button[type=submit]").prop('disabled',false);
           this.removeFile(file);            
       }
+  });
+
+  $("#productForm").submit(function(event){
+        event.preventDefault();
+        $.ajax({
+            url: "{{ route('products.store') }}",
+            data: $(this).serializeArray(),
+            method: 'post',
+            dataType: 'json',
+            headers: {
+          'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+      },
+            success: function(response){
+
+            }
+        });
   });
 
 
